@@ -26,15 +26,29 @@ buy_signals = []
 sell_signals = []
 trigger = 0
 
+
+
+starting = 100
+# currentprice = []
+dollaramount = []
+cryptoamount = []
+print("\n", "STARTING AMOUNT: ", starting)
+
+
 for x in range(len(data)):
     if data[f'SMA_{ma_1}'].iloc[x] > data[f'SMA_{ma_2}'].iloc[x] and trigger != 1:
         buy_signals.append(data['Adj Close'].iloc[x])
         sell_signals.append(float('nan'))
         trigger = 1
+        starting = starting / data['Adj Close'].iloc[x]
+        cryptoamount.append(starting)
+        # currentprice.append(data['Adj Close'].iloc[x])
     elif data[f'SMA_{ma_1}'].iloc[x] < data[f'SMA_{ma_2}'].iloc[x] and trigger != -1:
         sell_signals.append(data['Adj Close'].iloc[x])
         buy_signals.append(float('nan'))
         trigger = -1
+        starting = starting * data['Adj Close'].iloc[x]
+        dollaramount.append(starting)
     else:
         buy_signals.append(float('nan'))
         sell_signals.append(float('nan'))
@@ -42,7 +56,13 @@ for x in range(len(data)):
 data['Buy Signals'] = buy_signals
 data['Sell Signals'] = sell_signals
 
-print(data)
+print(data, '\n')
+for x in cryptoamount:
+    print('CRYPTO PURCHASED: ', x)
+print('\n')
+for y in dollaramount:
+    print('RETURN AMOUNT $$: ', y)
+print('\n')
 
 plt.plot(data['Adj Close'], label="Share Price", alpha=0.5)
 plt.plot(data[f'SMA_{ma_1}'], label=f"SMA_{ma_1}", color="orange", linestyle="--")
